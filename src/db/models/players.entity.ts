@@ -2,18 +2,18 @@ import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedC
 
 
 @Entity()
-export default class GlobalUsers extends BaseEntity {
+export default class Players extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
     
-    @Column({type: 'double'})
-    playersSumTotalAges: number;
+    @Column({type: 'varchar', length: 50})
+    nome: string;
     
-    @Column({type: 'double'})
-    playersSumTotalScore: number;
+    @Column()
+    idade: number;
 
     @Column({type: 'double'})
-    numberOfAuthoPlayers: number;
+    pontuacao: number;
 
     @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
