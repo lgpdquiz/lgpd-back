@@ -6,8 +6,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 
-/** # Essa classe será responsavel por persistir as respostas de forma estática.
-*/
 
 @Injectable()
 export class PlayersService {
@@ -26,11 +24,11 @@ export class PlayersService {
     }
 
     async create(reqData: CreatePlayerDto): Promise<PlayerEntity> {
-        const { nome , idade , pontuacao } = reqData; 
+        const { nome , idade } = reqData; 
         const playerInstance = new PlayerEntity();
         playerInstance.nome = nome;
         playerInstance.idade = idade;
-        playerInstance.pontuacao = pontuacao;
+
         return await this.playerRepository.save(await playerInstance.save());
     }
 

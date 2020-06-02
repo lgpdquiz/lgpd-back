@@ -3,7 +3,7 @@ import PlayerEntity from '../../db/models/players.entity';
 import CreatePlayerDto from './create-player.dto';
 import { PlayersService } from './players.service';
 
-@Controller('answers')
+@Controller('players')
 export class PlayersController {
     constructor(private playerService : PlayersService){}
 
