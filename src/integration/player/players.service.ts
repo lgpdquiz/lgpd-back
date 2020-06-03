@@ -26,8 +26,10 @@ export class PlayersService {
     async create(reqData: CreatePlayerDto): Promise<PlayerEntity> {
         const { nome , idade } = reqData; 
         const playerInstance = new PlayerEntity();
+        
         playerInstance.nome = nome;
         playerInstance.idade = idade;
+        
 
         return await this.playerRepository.save(await playerInstance.save());
     }

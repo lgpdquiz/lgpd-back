@@ -8,7 +8,7 @@ export default class Question extends BaseEntity {
     
     @Column()
     question: string;
-    
+
     @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
