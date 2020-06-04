@@ -5,7 +5,7 @@
 ### Link for access development mode:
 [localhost:3333/] -- Main page
 
-# Questions: 
+### Questions: 
 - [localhost:3333/questions]:
     `return all questions as array of object`
 - [localhost:3333/questions/database]: 
@@ -17,10 +17,10 @@
 - [localhost:3333/questions/generate]:
     `generate all the static questions what was writed inside the code`
 
-# Answers: <working...>
+### Answers: <working...>
  - [localhost:3333/answers]
     `return all answers as array of object`
-# Players: <working...>
+### Players: <working...>
  - [localhost:3333/players]
      `return all players as array of object`
   
