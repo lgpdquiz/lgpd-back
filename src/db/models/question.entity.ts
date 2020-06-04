@@ -15,6 +15,7 @@ export default class Question extends BaseEntity {
     @CreateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
+    size : number;
 
     //associações
     @OneToMany(type => AnswerEntity, answer => answer.question)

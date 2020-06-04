@@ -4,8 +4,10 @@ import CreateQuestion from './create-question';
 import { UpdateResult, DeleteResult } from  'typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable, Query, Options } from '@nestjs/common';
 import * as fs from 'fs';
+import { isNotEmpty, IS_NOT_EMPTY, IsNotEmpty } from 'class-validator';
+import { get } from 'https';
 
 /** # Essa classe será responsavel por persistir as perguntas de forma estática.
 */
@@ -14,13 +16,20 @@ import * as fs from 'fs';
 @Injectable()
 export class QuestionsService { 
 
+    private blockGenerated : boolean = false;    
+    private questions : QuestionEntity[] = []; 
+
     constructor(
         @InjectRepository(QuestionEntity)
         private questionRepository : Repository<QuestionEntity>,
     ){}
 
     async  findAll(): Promise<QuestionEntity[]> {
-        return await this.questionRepository.find();
+        return this.questions;
+    }
+
+    async  findAllFromDataBase(): Promise<QuestionEntity[]> {
+        return this.questionRepository.find();
     }
 
     async findById(id): Promise<QuestionEntity> {
@@ -29,15 +38,20 @@ export class QuestionsService {
     }
 
     async create(id: number, answer:string): Promise<any> {
+        if (!this.blockGenerated){
             const questionEntity : QuestionEntity = QuestionEntity.create();
             questionEntity.id = id;
             questionEntity.question = answer;
+            questionEntity.createdAt = new Date();
+            questionEntity.updatedAt = new Date();
+            this.questions.push(questionEntity);
             return await this.questionRepository.save(await QuestionEntity.save(questionEntity));
+        } 
     }
 
     async  generate(): Promise<any> {
         //Perguntas exemplo:
-        this.create(1, "funcionar1?");
+        this.create(1, "Perguntas1?");
         this.create(2, "Perguntas2?");
         this.create(3, "Perguntas3?");
         this.create(4, "Perguntas4?");
@@ -45,20 +59,30 @@ export class QuestionsService {
         this.create(6, "Perguntas6?");
         this.create(7, "Perguntas7?");
         this.create(8, "Perguntas8?");
-        
+        this.create(9, "Perguntas9?");
+        this.create(10, "Perguntas10?");
+        this.create(11, "Perguntas11?");
+        this.create(12, "Perguntas12?");
+        this.create(13, "Perguntas13?");
+        this.create(14, "Perguntas14?");
+
+        if (!this.blockGenerated){
+            const tamanho = new QuestionEntity();
+            tamanho.size = this.questions.length.valueOf();
+            this.questions.push(tamanho);
+            this.blockGenerated = true;
+        }
+            
         return  await '### List of questions generated...';
     }
 
-    async countNumberOfQuestions(): Promise<Number> {
-        return  (await this.questionRepository.count()).valueOf();
+    async countNumberOfQuestions(): Promise<number>{
+        return (await this.questionRepository.find()).length;
     }
 
-    async update(question: QuestionEntity): Promise<UpdateResult> {
-        return await this.questionRepository.update(question.id, question);
-    }
-
-    async delete(id): Promise<DeleteResult> {
-        return await this.questionRepository.delete(id);
+    private async syncArrayObjectWithBD(){
+        //validar se  o objeto esta de acordo com a tabela do banco ao criar e ao fazer um select (por ai id tmb);
+        
     }
 
 }
