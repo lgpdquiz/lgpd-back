@@ -1,4 +1,4 @@
-import { Controller, Get, Post,Put, Delete, Body, Param} from '@nestjs/common';
+import { Controller, Get, Post,Put, Delete, Body, Param, HttpStatus, HttpException} from '@nestjs/common';
 import Question from '../../db/models/question.entity';
 import { QuestionsService } from './questions.service';
 import CreateQuestion from './create-question';
@@ -30,7 +30,6 @@ export class QuestionsController {
 
     @Post('generate')
     async generateQuestionsToBd(){
-        console.log(this.getNumberOfQuestions());
         return this.questionService.generate();
     }
    

@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, Query, Options } from '@nestjs/common';
 import * as fs from 'fs';
-import { isNotEmpty, IS_NOT_EMPTY, IsNotEmpty } from 'class-validator';
+import { isNotEmpty, IS_NOT_EMPTY, IsNotEmpty, validate } from 'class-validator';
 import { get } from 'https';
 
 /** # Essa classe será responsavel por persistir as perguntas de forma estática.
@@ -16,8 +16,9 @@ import { get } from 'https';
 @Injectable()
 export class QuestionsService { 
 
+    private questions : QuestionEntity[] = [];
+    private idsAlreadyGenerated : number[] = [];
     private blockGenerated : boolean = false;    
-    private questions : QuestionEntity[] = []; 
 
     constructor(
         @InjectRepository(QuestionEntity)
@@ -34,55 +35,66 @@ export class QuestionsService {
 
     async findById(id): Promise<QuestionEntity> {
         return await this.questionRepository.findOne(id);
-       
     }
 
     async create(id: number, answer:string): Promise<any> {
-        if (!this.blockGenerated){
-            const questionEntity : QuestionEntity = QuestionEntity.create();
-            questionEntity.id = id;
-            questionEntity.question = answer;
-            questionEntity.createdAt = new Date();
-            questionEntity.updatedAt = new Date();
-            this.questions.push(questionEntity);
-            return await this.questionRepository.save(await QuestionEntity.save(questionEntity));
-        } 
+
+        
+        if(!this.idsAlreadyGenerated.includes(id) && !this.blockGenerated){
+                const questionEntity : QuestionEntity = QuestionEntity.create();
+                questionEntity.id = id;
+                questionEntity.question = answer;
+                questionEntity.createdAt = new Date();
+                questionEntity.updatedAt = new Date();
+                this.idsAlreadyGenerated.push(id);
+                this.questions.push(questionEntity);
+                return await this.questionRepository.save(await QuestionEntity.save(questionEntity)); 
+        }
     }
 
     async  generate(): Promise<any> {
-        //Perguntas exemplo:
-        this.create(1, "Perguntas1?");
-        this.create(2, "Perguntas2?");
-        this.create(3, "Perguntas3?");
-        this.create(4, "Perguntas4?");
-        this.create(5, "Perguntas5?");
-        this.create(6, "Perguntas6?");
-        this.create(7, "Perguntas7?");
-        this.create(8, "Perguntas8?");
-        this.create(9, "Perguntas9?");
-        this.create(10, "Perguntas10?");
-        this.create(11, "Perguntas11?");
-        this.create(12, "Perguntas12?");
-        this.create(13, "Perguntas13?");
-        this.create(14, "Perguntas14?");
-
-        if (!this.blockGenerated){
-            const tamanho = new QuestionEntity();
-            tamanho.size = this.questions.length.valueOf();
-            this.questions.push(tamanho);
-            this.blockGenerated = true;
+        if(!this.blockGenerated){
+            //Perguntas exemplo:
+            this.create(1, "Perguntas1?");
+            this.create(2, "Perguntas2?");
+            this.create(3, "Perguntas3?");
+            this.create(4, "Perguntas4?");
+        
+            if (!this.blockGenerated){
+                const tamanho = new QuestionEntity();
+                tamanho.size = this.questions.length.valueOf();
+                this.questions.push(tamanho);
+                this.blockGenerated = true;
+            }
+                
+            return  await '### List of questions generated...';
+        }else{
+            return await '### List of questions already generated...';
         }
-            
-        return  await '### List of questions generated...';
     }
 
     async countNumberOfQuestions(): Promise<number>{
-        return (await this.questionRepository.find()).length;
+        
+        return ((await this.questionRepository.find()).length);
+        
     }
 
     private async syncArrayObjectWithBD(){
         //validar se  o objeto esta de acordo com a tabela do banco ao criar e ao fazer um select (por ai id tmb);
         
+    }
+
+    async getQuestionAndAnswers(){
+        //retornar um objeto com a pergunta e a resposta correta dessa pergunta
+        //e junto, retornar 3 perguntas aleatorias erradas.....
+
+       
+
+    }
+
+    private async randomThreeWrongAnswers(){
+        //retornar um objeto com tres perguntas erradas baseado no id da pergunta e na resposta correta
+
     }
 
 }

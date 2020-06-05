@@ -1,11 +1,12 @@
-import {Column, CreateDateColumn, Entity, OneToMany, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity} from 'typeorm';
+import {Column, CreateDateColumn, Entity, OneToMany, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity, PrimaryColumn, Unique} from 'typeorm';
 import QuestionEntity from './question.entity';
 
 
 //schema
 @Entity({name: 'answers'})
 export default class Answer extends BaseEntity{
-    @PrimaryGeneratedColumn()
+    
+    @PrimaryColumn({primary: true})
     id: number;
     
     @Column()

@@ -18,21 +18,9 @@ export class AnswersController {
         return this.answerService.findById(id);
     }
 
-    @Post('create')
-    async create(@Body() newQuestion: CreateAnswerDto){
-      return this.answerService.create(newQuestion);
+    @Post('generate')
+    async generateAnswersToBd(){
+      return this.answerService.generate();
     }
 
-
-    @Put(':id/update')
-    async update(@Param('id') id, @Body() answer: Answer): Promise<any> {
-        answer.id = Number(id);
-        console.log('Update #' + answer.id);
-        return this.answerService.update(answer);
-    }
-
-    @Delete(':id/delete')
-    async deleteById(@Param('id') id): Promise<any>{
-        return this.answerService.delete(id);
-    }
 }

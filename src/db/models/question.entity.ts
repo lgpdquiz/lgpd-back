@@ -1,9 +1,9 @@
-import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
+import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity, PrimaryColumn} from 'typeorm';
 import AnswerEntity from './answer.entity';
 
-@Entity()
+@Entity({name: 'questions'})
 export default class Question extends BaseEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
     
     @Column()
