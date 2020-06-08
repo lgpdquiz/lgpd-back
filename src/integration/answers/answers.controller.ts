@@ -4,6 +4,9 @@ import Question from '../../db/models/question.entity';
 import CreateAnswerDto from './create-answer.dto';
 import { AnswersService } from './answers.service';
 
+
+/** - This class contains requests from answers .
+*/
 @Controller('answers')
 export class AnswersController {
     constructor(private answerService : AnswersService){}
@@ -17,10 +20,4 @@ export class AnswersController {
     getById(@Param('id') id): Promise<Answer>{
         return this.answerService.findById(id);
     }
-
-    @Post('generate')
-    async generateAnswersToBd(){
-      return this.answerService.generate();
-    }
-
 }

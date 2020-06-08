@@ -1,6 +1,8 @@
 import {Column, CreateDateColumn, Entity, OneToMany, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity, PrimaryColumn, Unique} from 'typeorm';
 import QuestionEntity from './question.entity';
 
+/** - Entity of answers
+*/
 
 //schema
 @Entity({name: 'answers'})

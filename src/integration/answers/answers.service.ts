@@ -1,93 +1,62 @@
 import AnswerEntity from '../../db/models/answer.entity';
 import QuestionEntity from '../../db/models/question.entity';
-import CreateAnswerDto from './create-answer.dto';
-
+import { ANSWERS } from './answers.mock';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 
-/** # Essa classe será responsavel por persistir as respostas de forma estática.
+/** - This class is responsible for persisting the object of answers <require existing questions in the database> .
 */
 
 @Injectable()
 export class AnswersService {
     private idsAlreadyGenerated : Number[] = [];
-    private answersArray : AnswerEntity[] = [];
+    private answersArrayOfEntity : AnswerEntity[] = [];
     private blockGenerated : boolean = false;
-    private idAnswer : number = 1;
-
+    answerMocks = ANSWERS;
+    
     constructor(
         @InjectRepository(AnswerEntity)
         private answerRepository : Repository<AnswerEntity>,
     ){}
 
     async  findAll(): Promise<AnswerEntity[]> {
-       return this.answersArray;
+       return this.answersArrayOfEntity;
     }
 
     async findById(id): Promise<AnswerEntity> {
         return await this.answerRepository.findOne(id);
     }
 
-    private async create(answer: string, isCorrect: boolean, questionId: number): Promise<AnswerEntity> {
-        
-        let arrayIdsContain = this.idsAlreadyGenerated.includes(this.idAnswer);
+    private async create(idAnswer: number, answer: string, isCorrect: boolean, questionId: number){
+        this.blockGenerated = false;
+        let arrayIdsContain = this.idsAlreadyGenerated.includes(idAnswer);
         let findQuestionWithId = QuestionEntity.findOne(questionId).then(item => item.id == questionId);
-        if ( !this.blockGenerated && !arrayIdsContain && findQuestionWithId){   
-            let answerEntity : AnswerEntity =  AnswerEntity.create();
-            answerEntity.id = this.idAnswer;
-            answerEntity.answer = answer;
-            answerEntity.isCorrect = isCorrect;
-            answerEntity.createdAt = new Date();
-            answerEntity.updatedAt = new Date();
-            this.idsAlreadyGenerated.push(this.idAnswer);
-            this.idAnswer++;           
-            answerEntity.question = await QuestionEntity.findOne(questionId).then(item=>item);
-            this.answersArray.push(answerEntity);
 
-            return await this.answerRepository.save(await AnswerEntity.save(answerEntity));
-                
-        }
-        
-        //  validar para não instanciar novos objetos quando o id da questão não existir.
-        //  [...]
-        
+        if ( !this.blockGenerated && !arrayIdsContain && findQuestionWithId){
+            let newAnswerEntity : AnswerEntity =  AnswerEntity.create();
+            newAnswerEntity.id = idAnswer;
+            newAnswerEntity.answer = answer;
+            newAnswerEntity.isCorrect = isCorrect;
+            newAnswerEntity.createdAt = new Date();
+            newAnswerEntity.updatedAt = new Date();
+            this.idsAlreadyGenerated.push(idAnswer);
+            newAnswerEntity.question =  await QuestionEntity.findOne(questionId).then(item=>item);
+            this.answersArrayOfEntity.push(newAnswerEntity);
+            await AnswerEntity.save(newAnswerEntity)
+        }               
     }
 
-    
-    
     async generate(){
-        if(!this.blockGenerated){
-            //1
-            this.create("resposta 1 da 1 certa", true, 1);
-            this.create("resposta 2 da 1 errada", false, 1);
-            this.create("resposta 3 da 1 errada", false, 1);
-            this.create("resposta 4 da 1 errada", false, 1);
-                
-            //2
-            this.create("resposta 1 da 2 certa", true, 2);
-            this.create("resposta 2 da 2 errada", false, 2);
-            this.create("resposta 3 da 2 errada", false, 2);
-            this.create("resposta 4 da 2 errada", false, 2);
-                
-            //3
-            this.create("resposta 1 da 3 certa", true, 3);
-            this.create("resposta 2 da 3 errada", false, 3);
-            this.create("resposta 3 da 3 errada", false, 3);
-            this.create("resposta 4 da 3 errada", false, 3);
-                
-            //4
-            this.create("resposta 1 da 4 certa", true, 4);
-            this.create("resposta 2 da 4 errada", false, 4);
-            this.create("resposta 3 da 4 errada", false, 4);
-            this.create("resposta 4 da 4 errada", false, 4);
+        let findQuestion = await QuestionEntity.find().then(item => item);
 
+        if(!this.blockGenerated && findQuestion){ 
+            this.answerMocks.forEach(item => {
+                this.create(item.id, item.answer, item.isCorrect, item.questionId).catch(()=>console.log("reject"));
+            });
             this.blockGenerated = true;
-
-            return  await '### List of answers generated...';
-        }else{
-            return await '### List of questions already generated...';
+            return '### List of answers generated...';
         }
     }
 

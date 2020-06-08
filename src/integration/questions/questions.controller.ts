@@ -3,6 +3,9 @@ import Question from '../../db/models/question.entity';
 import { QuestionsService } from './questions.service';
 import CreateQuestion from './create-question';
 
+
+/** - This class contains requests from questions> .
+*/
 @Controller('questions')
 export class QuestionsController {
     constructor(private readonly questionService : QuestionsService){}
@@ -12,7 +15,7 @@ export class QuestionsController {
         return this.questionService.findAll();
     }
 
-    @Get('/database')
+    @Get('database')
     getAllFromDataBase(): Promise<Question[]>{
         return this.questionService.findAllFromDataBase();
     }
@@ -20,17 +23,6 @@ export class QuestionsController {
     @Get(':id')
     getById(@Param('id') id): Promise<Question>{
         return this.questionService.findById(id);
-    }
-
-    //Este controller pode não funcionar devido o retorno de Promise<pending>, então o getAll retorna um atributo no objeto com o tamanho.
-    @Get('count') 
-    async getNumberOfQuestions() : Promise<number>{
-        return this.questionService.countNumberOfQuestions();
-    }
-
-    @Post('generate')
-    async generateQuestionsToBd(){
-        return this.questionService.generate();
     }
    
 }
