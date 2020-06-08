@@ -6,8 +6,12 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 
+/** # Essa classe será responsavel por persistir as perguntas de forma estática.
+*/
+
+
 @Injectable()
-export class QuestionsService {
+export class QuestionsService { 
     constructor(
         @InjectRepository(Question)
         private questionRepository : Repository<Question>,

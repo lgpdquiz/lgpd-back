@@ -1,4 +1,4 @@
-import {Column, JoinColumn, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity} from 'typeorm';
+import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
 import AnswerEntity from './answer.entity';
 
 
