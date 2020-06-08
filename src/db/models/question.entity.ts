@@ -1,7 +1,6 @@
 import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
 import AnswerEntity from './answer.entity';
 
-
 @Entity()
 export default class Question extends BaseEntity {
     @PrimaryGeneratedColumn()

@@ -7,11 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as ormOptions from './config/orm';
 import { QuestionsModule } from './integration/questions/questions.module';
 import { AnswersModule } from './integration/answers/answers.module';
-import { GlobalUsersModule } from './integration/globalUsers/globalUsers.module';
+import { PlayersModule } from './integration/player/players.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, GlobalUsersModule],
+  imports: [TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, PlayersModule],
   controllers: [AppController],
   providers: [AppService],
 })
