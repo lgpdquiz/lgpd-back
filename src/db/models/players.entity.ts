@@ -1,6 +1,9 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
 
-@Entity()
+/** - Entity of players
+*/
+
+@Entity({name: 'players'})
 export default class Players extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

@@ -5,14 +5,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 
 import * as ormOptions from './config/orm';
+
 import { QuestionsModule } from './integration/questions/questions.module';
 import { AnswersModule } from './integration/answers/answers.module';
 import { PlayersModule } from './integration/player/players.module';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, PlayersModule],
+  imports: [ ConfigModule.forRoot({
+    expandVariables: true,
+  }),TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, PlayersModule],
   controllers: [AppController],
   providers: [AppService],
+  
 })
 export class AppModule {}

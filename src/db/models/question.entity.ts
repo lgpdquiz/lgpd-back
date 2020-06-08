@@ -1,20 +1,24 @@
-import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
+import {Column, CreateDateColumn, Entity, OneToOne, OneToMany, PrimaryGeneratedColumn, BaseEntity, PrimaryColumn} from 'typeorm';
 import AnswerEntity from './answer.entity';
 
-@Entity()
+/** - Entity of questions
+*/
+
+@Entity({name: 'questions'})
 export default class Question extends BaseEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
     
     @Column()
     question: string;
-    
+
     @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
     @CreateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
+    size : number;
 
     //associações
     @OneToMany(type => AnswerEntity, answer => answer.question)

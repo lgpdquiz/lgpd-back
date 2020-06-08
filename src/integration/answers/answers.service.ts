@@ -1,47 +1,63 @@
-import Answer from '../../db/models/answer.entity';
-import Question from '../../db/models/question.entity';
-import CreateAnswerDto from './create-answer.dto';
-
-import { UpdateResult, DeleteResult } from  'typeorm';
+import AnswerEntity from '../../db/models/answer.entity';
+import QuestionEntity from '../../db/models/question.entity';
+import { ANSWERS } from './answers.mock';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 
-/** # Essa classe será responsavel por persistir as respostas de forma estática.
+
+/** - This class is responsible for persisting the object of answers <require existing questions in the database> .
 */
 
 @Injectable()
 export class AnswersService {
+    private idsAlreadyGenerated : Number[] = [];
+    private answersArrayOfEntity : AnswerEntity[] = [];
+    private blockGenerated : boolean = false;
+    answerMocks = ANSWERS;
     
     constructor(
-        @InjectRepository(Answer)
-        private answerRepository : Repository<Answer>,
+        @InjectRepository(AnswerEntity)
+        private answerRepository : Repository<AnswerEntity>,
     ){}
 
-    async  findAll(): Promise<Answer[]> {
-        return Answer.find();
+    async  findAll(): Promise<AnswerEntity[]> {
+       return this.answersArrayOfEntity;
     }
 
-    async findById(id): Promise<Answer> {
+    async findById(id): Promise<AnswerEntity> {
         return await this.answerRepository.findOne(id);
     }
 
-    async create(reqData: CreateAnswerDto): Promise<Answer> {
-        const { answer , isCorrect , questionId } = reqData; 
-        const answerInstance = new Answer();
-        answerInstance.answer = answer;
-        answerInstance.isCorrect = isCorrect;
-        answerInstance.question = await Question.findOne(questionId) ;
-        
-        return await this.answerRepository.save(await answerInstance.save());
+    private async create(idAnswer: number, answer: string, isCorrect: boolean, questionId: number){
+        this.blockGenerated = false;
+        let arrayIdsContain = this.idsAlreadyGenerated.includes(idAnswer);
+        let findQuestionWithId = QuestionEntity.findOne(questionId).then(item => item.id == questionId);
+
+        if ( !this.blockGenerated && !arrayIdsContain && findQuestionWithId){
+            let newAnswerEntity : AnswerEntity =  AnswerEntity.create();
+            newAnswerEntity.id = idAnswer;
+            newAnswerEntity.answer = answer;
+            newAnswerEntity.isCorrect = isCorrect;
+            newAnswerEntity.createdAt = new Date();
+            newAnswerEntity.updatedAt = new Date();
+            this.idsAlreadyGenerated.push(idAnswer);
+            newAnswerEntity.question =  await QuestionEntity.findOne(questionId).then(item=>item);
+            this.answersArrayOfEntity.push(newAnswerEntity);
+            await AnswerEntity.save(newAnswerEntity)
+        }               
     }
 
-    async update(answer: Answer): Promise<UpdateResult> {
-        return await this.answerRepository.update(answer.id, answer);
-    }
+    async generate(){
+        let findQuestion = await QuestionEntity.find().then(item => item);
 
-    async delete(id): Promise<DeleteResult> {
-        return await this.answerRepository.delete(id);
+        if(!this.blockGenerated && findQuestion){ 
+            this.answerMocks.forEach(item => {
+                this.create(item.id, item.answer, item.isCorrect, item.questionId).catch(()=>console.log("reject"));
+            });
+            this.blockGenerated = true;
+            return '### List of answers generated...';
+        }
     }
 
 }

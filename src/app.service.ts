@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { QuestionsService } from './integration/questions/questions.service';
+import { AnswersService } from './integration/answers/answers.service';
 
 
-//regra de negócio é aqui
+
+/** - This class contains logics from class AppController .
+*/
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Bem vindo ao jogo LGPD trivia!';
-  }
+
 }
