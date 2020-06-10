@@ -5,6 +5,7 @@ import Question from '../../db/models/question.entity';
 import { QuestionsService } from './questions.service';
 import { QuestionsController } from './questions.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppModule } from 'src/app.module';
 
 
 @Module({

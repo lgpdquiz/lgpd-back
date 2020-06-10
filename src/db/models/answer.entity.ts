@@ -17,7 +17,7 @@ export default class Answer extends BaseEntity{
     @Column()
     isCorrect: boolean;
 
-    @ManyToOne(type => QuestionEntity, question => question.answers, {primary: true})
+    @ManyToOne('Question', 'answers')
     question: QuestionEntity; //.. baseado na resposta é retornado só 1 pergunta.
 
     @CreateDateColumn({name: 'created_at'})

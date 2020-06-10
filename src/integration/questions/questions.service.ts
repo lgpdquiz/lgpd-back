@@ -1,10 +1,11 @@
 import QuestionEntity from '../../db/models/question.entity';
 import CreateQuestion from './create-question';
 import { QUESTIONS } from './questions.mock';
-
+import AnswerEntity from '../../db/models/answer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, Query, Options } from '@nestjs/common';
+import { AnswersService } from '../answers/answers.service';
 
 
 /** - This class is responsible for persisting the object of questions.
@@ -15,6 +16,7 @@ export class QuestionsService {
     questionsMocks = QUESTIONS;
 
     private questions : QuestionEntity[] = [];
+    private answersArray : AnswerEntity[] = [];
     private idsAlreadyGenerated : number[] = [];
     private blockGenerated : boolean = false;
     
@@ -35,14 +37,17 @@ export class QuestionsService {
         return await this.questionRepository.findOne(id);
     }
 
-    async create(id: number, answer:string): Promise<any> {
+    async create(id: number, question:string): Promise<any> {
         if(!this.idsAlreadyGenerated.includes(id) && !this.blockGenerated){
-                const questionEntity : QuestionEntity = QuestionEntity.create();
-                questionEntity.id = id;
-                questionEntity.question = answer;
-                questionEntity.createdAt = new Date();
-                questionEntity.updatedAt = new Date();
-                this.idsAlreadyGenerated.push(id);
+                const questionEntity : QuestionEntity = QuestionEntity.create({
+                    id : id,
+                    question : question,
+                    createdAt : new Date(),
+                    updatedAt : new Date(),
+                    answers : []
+                });
+                
+                this.idsAlreadyGenerated.push(id); 
                 this.questions.push(questionEntity);
                 await QuestionEntity.save(questionEntity);
         }
