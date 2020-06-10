@@ -10,6 +10,8 @@ import { QuestionsModule } from './integration/questions/questions.module';
 import { AnswersModule } from './integration/answers/answers.module';
 import { PlayersModule } from './integration/player/players.module';
 import { ConfigModule } from '@nestjs/config';
+import { QuestionsService } from './integration/questions/questions.service';
+import { AnswersService } from './integration/answers/answers.service';
 
 
 @Module({

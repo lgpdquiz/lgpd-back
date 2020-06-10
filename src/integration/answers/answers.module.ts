@@ -5,6 +5,7 @@ import Answer from '../../db/models/answer.entity';
 import { AnswersService } from './answers.service';
 import { AnswersController } from './answers.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppModule } from 'src/app.module';
 
 @Module({
   

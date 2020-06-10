@@ -21,6 +21,6 @@ export default class Question extends BaseEntity {
     size : number;
 
     //associações
-    @OneToMany(type => AnswerEntity, answer => answer.question)
+    @OneToMany('Answer', 'question')
     answers: AnswerEntity[]; //a questão retorna varias questões e as perguntas retorna só 1 pergunta.
 }
