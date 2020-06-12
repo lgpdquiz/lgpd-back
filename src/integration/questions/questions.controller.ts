@@ -8,11 +8,16 @@ import CreateQuestion from './create-question';
 */
 @Controller('questions')
 export class QuestionsController {
-    constructor(private readonly questionService : QuestionsService){}
+    constructor(private questionService : QuestionsService){}
 
     @Get()
     getAll(): Promise<Question[]>{
         return this.questionService.findAll();
+    }
+
+    @Get('random')
+    getRandomQuestion(): Promise<Question>{
+       return this.questionService.randomQuestionsAndAnswers();  
     }
 
     @Get('database')
