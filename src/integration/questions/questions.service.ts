@@ -15,8 +15,14 @@ import { AnswersService } from '../answers/answers.service';
 export class QuestionsService { 
     questionsMocks = QUESTIONS;
 
+    private idsQuestionsRandom : number[] = [];
+    private idsAnswersRandom : number[] = [];
+    private questionAndAnswerRandom : QuestionEntity;
+
+
+
+
     private questions : QuestionEntity[] = [];
-    private answersArray : AnswerEntity[] = [];
     private idsAlreadyGenerated : number[] = [];
     private blockGenerated : boolean = false;
     
@@ -25,6 +31,14 @@ export class QuestionsService {
         private questionRepository : Repository<QuestionEntity>,
     ){}
 
+    async getIdsAlreadyGenerated(){
+        return this.idsAlreadyGenerated;
+    }
+
+    async countNumberOfQuestions(): Promise<number>{
+        return ((await this.questionRepository.find()).length);
+    }
+    
     async  findAll(): Promise<QuestionEntity[]> {
         return this.questions;
     }
@@ -69,26 +83,79 @@ export class QuestionsService {
             return '### List of questions already generated...';
         }
     }
-
-    async countNumberOfQuestions(): Promise<number>{
-        return ((await this.questionRepository.find()).length);
-    }
     
-    private async randomThreeWrongAnswers(){
-        //retornar um objeto com tres perguntas erradas baseado no id da pergunta e na resposta correta
+    /** Returns a random question with one right answer and three other random wrong answers*/
+    async randomQuestionsAndAnswers() : Promise<any>{
         
-    }
-    
-    async getQuestionAndAnswers(){
-        //retornar um objeto com a pergunta e a resposta correta dessa pergunta
-        //e junto, retornar 3 perguntas aleatorias erradas.....
+       let tempObject : QuestionEntity;
+       tempObject = this.randValidQuestionId();
+        
+       if(tempObject != null){
+            this.questionAndAnswerRandom = QuestionEntity.create({
+                id: tempObject.id,
+                question: tempObject.question,
+                createdAt: tempObject.createdAt,
+                updatedAt: tempObject.updatedAt,
+                answers: tempObject.answers
+            });
+                this.randomValidAnswerId(this.questionAndAnswerRandom)
+                return this.questionAndAnswerRandom;
+        }
+        return null;
+
     }
 
-    async getIdsAlreadyGenerated(){
-        return this.idsAlreadyGenerated;
+    private rand(min, max) {
+        let randomNum = Math.random() * (max - min) + min;
+        return Math.round(randomNum);
     }
 
-    
-    
+    private randomValidAnswerId(question: QuestionEntity){
+        let tempAllWrongAnswers = []
+        let tempAnswers = []
+        this.idsAnswersRandom = [];
+        question.answers.find(answer =>{
+            if(answer.isCorrect){
+                tempAnswers.push(answer);
+            }else{
+                tempAllWrongAnswers.push(answer);
+            }
+        })
+        
+        for(let i=0; i<3; i++){ 
+            tempAnswers.push(this.randomizeIds(0, question.answers.length-2, this.idsAnswersRandom, tempAllWrongAnswers));
+        }
+        
+        return this.questionAndAnswerRandom.answers = tempAnswers;
+
+    }
+
+    private randValidQuestionId(){
+        return this.randomizeIds(0, this.questions.length-2, this.idsQuestionsRandom, this.questions);
+    }
+
+
+    private randomizeIds(begin: number, arrayLength: number, arrayOfIds: number[], arrayEntity: any[]){
+        let randomNumberForId;
+        let idsComparedInCount = [];
+        let countIds = 0;
+        while(idsComparedInCount.length<arrayLength){
+            randomNumberForId = this.rand(begin, arrayLength);
+
+            if(!arrayOfIds.includes(randomNumberForId)){
+                arrayOfIds.push(randomNumberForId);
+                if(arrayEntity[randomNumberForId]!= null){
+                    return arrayEntity[randomNumberForId];
+                }
+
+            }else if (!idsComparedInCount.includes(randomNumberForId)){
+                    idsComparedInCount.push(randomNumberForId);
+                    countIds++;
+                    randomNumberForId = this.rand(begin, arrayLength); 
+            } 
+        }
+    }
+
+
 }
 
