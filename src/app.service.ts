@@ -8,5 +8,4 @@ import { AnswersService } from './integration/answers/answers.service';
 */
 @Injectable()
 export class AppService {
-
 }

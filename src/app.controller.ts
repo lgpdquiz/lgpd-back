@@ -10,33 +10,33 @@ import { clearInterval } from 'timers';
 */
 @Controller()
 export class AppController {
-  
-  constructor(private appService: AppService,private question: QuestionsService, private answers: AnswersService){}
+
+  constructor(private appService: AppService, private question: QuestionsService, private answers: AnswersService) { }
 
   @Get('/start')
-  async main(){
+  async start() {
 
-    let count  = 0;
+    let count = 0;
 
     this.question.generate();
-    
-    var timerGenerateAnswers = setInterval(()=>{
+
+    var timerGenerateAnswers = setInterval(() => {
       this.answers.generate();
-      console.log("##answers generated")  
+      console.log("##answers generated")
       clearInterval(timerGenerateAnswers);
     }, 2000);
 
-    var timerSetAnswersToQuestions = setInterval(()=>{
-      this.answers.setAnswersToQuestions(this.question).catch(()=>'REJECT')
+    var timerSetAnswersToQuestions = setInterval(() => {
+      this.answers.setAnswersToQuestions(this.question).catch(() => 'REJECT')
       console.log("###answers set to questions");
-      
+
       count++;
-      if(count>1){
+      if (count > 1) {
         clearInterval(timerSetAnswersToQuestions);
       }
     }, 2000);
 
-    
+
     return 'Hello World';
   }
 

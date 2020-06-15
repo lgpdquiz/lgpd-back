@@ -8,10 +8,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppModule } from 'src/app.module';
 
 @Module({
-  
+
   imports: [ConfigModule, TypeOrmModule.forFeature([Answer])],
   providers: [AnswersService, ConfigService],
   controllers: [AnswersController],
   exports: [AnswersService]
 })
-export class AnswersModule {}
+export class AnswersModule { }
