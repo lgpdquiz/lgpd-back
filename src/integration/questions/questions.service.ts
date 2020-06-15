@@ -23,6 +23,8 @@ export class QuestionsService {
     private blockGenerated: boolean = false;
     private questionsGenerate: boolean = false;
 
+    private tempObject: QuestionEntity;
+
     constructor(
         @InjectRepository(QuestionEntity)
         private questionRepository: Repository<QuestionEntity>,
@@ -92,26 +94,24 @@ export class QuestionsService {
     /** Returns a random question with one right answer and three other random wrong answers*/
     async randomQuestionsAndAnswers(): Promise<QuestionEntity> {
 
-        let tempObject: QuestionEntity;
-        tempObject = this.randValidQuestionId();
+        this.tempObject = this.randValidQuestionId();
 
-        if (tempObject != null) {
+        if (this.tempObject != undefined) {
             this.questionAndAnswerRandom = QuestionEntity.create({
-                id: tempObject.id,
-                question: tempObject.question,
-                createdAt: tempObject.createdAt,
-                updatedAt: tempObject.updatedAt,
-                answers: tempObject.answers
+                id: this.tempObject.id,
+                question: this.tempObject.question,
+                createdAt: this.tempObject.createdAt,
+                updatedAt: this.tempObject.updatedAt,
+                answers: this.tempObject.answers
             });
-            this.randomValidAnswerId(this.questionAndAnswerRandom)
-
-            return this.questionAndAnswerRandom;
+            this.randomValidAnswerId(this.questionAndAnswerRandom);
         }
-
+        return this.questionAndAnswerRandom;
     }
 
     private rand(min, max) {
         let randomNum = Math.random() * (max - min) + min;
+        console.log(Math.round(randomNum));
         return Math.round(randomNum);
     }
 
@@ -140,30 +140,27 @@ export class QuestionsService {
     }
 
 
-    private randomizeIds(begin: number, arrayLength: number, arrayOfIds: number[], arrayEntity: any[]) {
-        let randomNumberForId;
-        let idsComparedInCount = [];
+    private randomizeIds(begin: number, arrayLength: number, arrayOfPositions: number[], arrayEntity: any[]) {
+        let randomPositionInArray;
+        let positionsComparedInCount = [];
         let countIds = 0;
-        while (idsComparedInCount.length < arrayLength) {
-            randomNumberForId = this.rand(begin, arrayLength);
+        while (positionsComparedInCount.length < arrayLength) {
+            randomPositionInArray = this.rand(begin, arrayLength);
             
-            if (!arrayOfIds.includes(randomNumberForId)) {
-                arrayOfIds.push(randomNumberForId);
-                
-                if (arrayEntity[randomNumberForId] != null) {
-                    return arrayEntity[randomNumberForId];
+            if (!arrayOfPositions.includes(randomPositionInArray)) {
+                if (arrayEntity[randomPositionInArray] != undefined) {
+                    arrayOfPositions.push(randomPositionInArray);
+                    return arrayEntity[randomPositionInArray];
                 }
-
-            } else if (!idsComparedInCount.includes(randomNumberForId)) {
-                idsComparedInCount.push(randomNumberForId);
+            } else if (!positionsComparedInCount.includes(randomPositionInArray)) {
+                positionsComparedInCount.push(randomPositionInArray);
                 countIds++;
-                randomNumberForId = this.rand(begin, arrayLength);
+                randomPositionInArray = this.rand(begin, arrayLength);
             }
         }
     }
 
     async resetAllRandomQuestionsAndAnswers() {
-        console.log("RESET MATCH")
        while(this.idsQuestionsRandom.length > 0){
         this.idsQuestionsRandom.pop();
        }
