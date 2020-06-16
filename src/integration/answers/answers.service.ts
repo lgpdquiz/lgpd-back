@@ -12,71 +12,75 @@ import { QuestionsService } from '../questions/questions.service';
 
 @Injectable()
 export class AnswersService {
-    private idsAlreadyGenerated : Number[] = [];
-    private answersArrayOfEntity : AnswerEntity[] = [];
-    private blockGenerated : boolean = false;
-    private blockSetAnswerToQuestion : number= 0;
+    private idsAlreadyGenerated: Number[] = [];
+    private answersArrayOfEntity: AnswerEntity[] = [];
+    private blockGenerated: boolean = false;
+    private blockSetAnswerToQuestion: number = 0;
     answerMocks = ANSWERS;
-    
+
     constructor(
         @InjectRepository(AnswerEntity)
-        private answerRepository : Repository<AnswerEntity>,
-    ){}
+        private answerRepository: Repository<AnswerEntity>,
+    ) { }
 
-    async  findAll(): Promise<AnswerEntity[]> {
-       return this.answersArrayOfEntity;
+    async getRepository(){
+        return this.answerRepository;
+    }
+
+    async findAll(): Promise<AnswerEntity[]> {
+        return this.answersArrayOfEntity;
     }
 
     async findById(id): Promise<AnswerEntity> {
         return await this.answerRepository.findOne(id);
     }
 
-    private async create(idAnswer: number, answer: string, isCorrect: boolean, questionId: number){
+    private async create(idAnswer: number, answer: string, isCorrect: boolean, questionId: number) {
         this.blockGenerated = false;
         let arrayIdsContain = this.idsAlreadyGenerated.includes(idAnswer);
         let findQuestionWithId = QuestionEntity.findOne(questionId).then(item => item.id == questionId);
 
-        if ( !this.blockGenerated && !arrayIdsContain && findQuestionWithId){
-            let newAnswerEntity : AnswerEntity =  AnswerEntity.create({
-                id : idAnswer,
-                answer : answer,
-                isCorrect : isCorrect,
-                createdAt : new Date(),
-                updatedAt : new Date(),
+        if (!this.blockGenerated && !arrayIdsContain && findQuestionWithId) {
+            let newAnswerEntity: AnswerEntity = AnswerEntity.create({
+                id: idAnswer,
+                answer: answer,
+                isCorrect: isCorrect,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             });
             this.idsAlreadyGenerated.push(idAnswer);
-            newAnswerEntity.question =  await QuestionEntity.findOne(questionId).then(item=>item);
+            newAnswerEntity.question = await QuestionEntity.findOne(questionId).then(item => item);
             this.answersArrayOfEntity.push(newAnswerEntity);
-            
+
             await AnswerEntity.save(newAnswerEntity)
-        }               
+        }
     }
 
-    async generate(){
+    async generate() {
         let findQuestion = await QuestionEntity.find().then(item => item);
 
-        if(!this.blockGenerated && findQuestion){ 
+        if (!this.blockGenerated && findQuestion) {
             this.answerMocks.forEach(item => {
-                this.create(item.id, item.answer, item.isCorrect, item.questionId).catch(()=>console.log("reject"));
+                this.create(item.id, item.answer, item.isCorrect, item.questionId).catch(() => console.log("reject"));
             });
             this.blockGenerated = true;
             return '### List of answers generated...';
         }
     }
 
-    async setAnswersToQuestions(allQuestions : QuestionsService) {
-            return allQuestions.findAll().then(questions =>{
-                if(this.blockSetAnswerToQuestion < 2){
-                    questions.forEach(question=>{
-                        this.answersArrayOfEntity.forEach((answer)=>{
-                            if(question.id==answer.question.id){
-                                question.answers.push(answer);
-                            }
-                        })
+    async setAnswersToQuestions(allQuestions: QuestionsService) {
+        return allQuestions.findAll().then(questions => {
+            if (this.blockSetAnswerToQuestion < 2) {
+                questions.forEach(question => {
+                    this.answersArrayOfEntity.forEach((answer) => {
+                        if (question.id == answer.question.id) {
+                            question.answers.push(answer);
+                        }
                     })
-                    
-                }
-                this.blockSetAnswerToQuestion++;
-            }).catch(err=>err)
+                })
+
+            }
+            this.blockSetAnswerToQuestion++;
+        }).catch(err => err)
     }
 }

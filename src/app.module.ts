@@ -10,16 +10,16 @@ import { QuestionsModule } from './integration/questions/questions.module';
 import { AnswersModule } from './integration/answers/answers.module';
 import { PlayersModule } from './integration/player/players.module';
 import { ConfigModule } from '@nestjs/config';
-import { QuestionsService } from './integration/questions/questions.service';
-import { AnswersService } from './integration/answers/answers.service';
-
+import { MatchService } from './ingame/match.service';
+import { MatchModule } from './ingame/match.module';
+import { MatchController } from './ingame/match.controller';
 
 @Module({
-  imports: [ ConfigModule.forRoot({
+  imports: [ConfigModule.forRoot({
     expandVariables: true,
-  }),TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, PlayersModule],
-  controllers: [AppController],
-  providers: [AppService],
-  
+  }), TypeOrmModule.forRoot(ormOptions), QuestionsModule, AnswersModule, PlayersModule, MatchModule],
+  controllers: [AppController, MatchController],
+  providers: [AppService, MatchService],
+
 })
-export class AppModule {}
+export class AppModule { }

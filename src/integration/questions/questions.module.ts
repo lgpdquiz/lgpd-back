@@ -9,9 +9,9 @@ import { AppModule } from 'src/app.module';
 
 
 @Module({
-  imports: [ConfigModule,  TypeOrmModule.forFeature([Question])],
-  providers: [QuestionsService,  ConfigService],
+  imports: [ConfigModule, TypeOrmModule.forFeature([Question])],
+  providers: [QuestionsService, ConfigService],
   controllers: [QuestionsController],
   exports: [QuestionsService]
 })
-export class QuestionsModule {}
+export class QuestionsModule { }

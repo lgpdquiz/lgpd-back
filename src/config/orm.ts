@@ -2,7 +2,7 @@ import * as path from 'path';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 
-const options : TypeOrmModuleOptions = {
+const options: TypeOrmModuleOptions = {
     type: 'mysql',
     host: 'localhost',
     port: 3306,
@@ -12,8 +12,8 @@ const options : TypeOrmModuleOptions = {
     logging: true,
     entities: [path.resolve(__dirname, '..', 'db', 'models', '*')],
     synchronize: true,
-    cli : {
-        entitiesDir : 'src/db/models'
+    cli: {
+        entitiesDir: 'src/db/models'
     }
 }
 
