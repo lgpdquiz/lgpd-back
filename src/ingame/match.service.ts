@@ -11,7 +11,7 @@ import { Any } from 'typeorm';
 @Injectable()
 export class MatchService {
 
-    private totalPlayTime: number = 0;
+    private totalTimeSpentInMatch: number = 0;
     private correctCount: number = 0;
     private wrongCount: number = 0;
     private scoreInQuestion: number = 1000;
@@ -31,7 +31,7 @@ export class MatchService {
     private questionsRequests = 0;
     private matchStarted = false;
     private restartMatch = true;
-    private numberTotalOfQuestions = 4;
+    private numberTotalOfQuestions = 3;
     private showFinalInfo = false;
 
 
@@ -48,9 +48,9 @@ export class MatchService {
 
         if (verifyQuestionExist) {
             if (this.restartMatch) {
-                this.matchStarted = true;
                 this.questionService.resetAllRandomQuestionsAndAnswers();
             }
+            this.matchStarted = true;
             this.init();
         } else {
             return 'Questions was not found, maybe was not generated?'
@@ -71,10 +71,10 @@ export class MatchService {
      * at the end it generates an object with the result */
     async init() {
         this.restartMatch = true;
-
+        this.questionsRequests++;
         if (this.questionsRequests <= this.numberTotalOfQuestions) {
             this.newQuestion = await this.questionService.randomQuestionsAndAnswers().then(item => item);
-            this.questionsRequests++;
+             
 
             if (this.newQuestion != null && this.newQuestion != undefined) {
                 this.resetTimer();
@@ -90,7 +90,7 @@ export class MatchService {
                 finalScore: this.finalScore,
                 totalOfCorrectAnswers: this.correctCount,
                 totalOfWrongAnswers: this.wrongCount,
-                totalTimeSpent: this.totalPlayTime,
+                totalTimeSpent: this.totalTimeSpentInMatch,
             }
             this.resetInfo();
 
@@ -106,7 +106,6 @@ export class MatchService {
     /** 
      * This method is responsible for choosing an answer in the question object drawn by the parameter id */
     async choseAnswer(id: number) {
-
         if (this.matchStarted) {
             this.selectAnswer = this.newQuestion.answers.find(item => {
                 if (item.id == id) {
@@ -171,6 +170,8 @@ export class MatchService {
         }
     }
 
+    /**
+     * Returns the timer in seconds */
     async getTimer() {
         if (this.timerOn) {
             return this.timePerQuestion / 1000;
@@ -187,7 +188,7 @@ export class MatchService {
 
             if (this.timePerQuestion <= 120000) {
                 this.timePerQuestion += 1000;
-                this.totalPlayTime += 1000;
+                this.totalTimeSpentInMatch += 1000;
                 console.log(this.timePerQuestion)
             }
 
@@ -216,7 +217,6 @@ export class MatchService {
     async stopTimer() {
         clearInterval(this.counterMs);
         this.timerOn = false;
-        this.matchStarted = false;
         this.restartMatch = true;
     }
 
@@ -225,7 +225,7 @@ export class MatchService {
         this.scoreInQuestion = 1000;
         this.correctCount = 0;
         this.wrongCount = 0;
-        this.totalPlayTime = 0;
+        this.totalTimeSpentInMatch = 0;
 
     }
 
