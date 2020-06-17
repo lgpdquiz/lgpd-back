@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity, PrimaryColumn, Unique } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, BaseEntity, PrimaryColumn} from 'typeorm';
 import QuestionEntity from './question.entity';
 
 /** - Entity of answers
@@ -18,7 +18,7 @@ export default class Answer extends BaseEntity {
     isCorrect: boolean;
 
     @ManyToOne('Question', 'answers')
-    question: QuestionEntity; //.. baseado na resposta é retornado só 1 pergunta.
+    question: QuestionEntity;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { QuestionsService } from './integration/questions/questions.service';
 import { AnswersService } from './integration/answers/answers.service';
 import { clearInterval } from 'timers';
+import { RankService } from './integration/rank/rank.service';
 
 
 /** - This class contains requests from App .
@@ -11,7 +12,7 @@ import { clearInterval } from 'timers';
 @Controller()
 export class AppController {
 
-  constructor(private appService: AppService, private question: QuestionsService, private answers: AnswersService) { }
+  constructor(private appService: AppService, private question: QuestionsService, private answers: AnswersService, private rank: RankService) { }
 
   @Get('/start')
   async start() {
@@ -36,6 +37,10 @@ export class AppController {
       }
     }, 2000);
 
+    var timerGenerateRank = setInterval(()=>{
+      this.rank.create();
+      clearInterval(timerGenerateRank);
+    }, 2000);
 
     return 'Hello World';
   }

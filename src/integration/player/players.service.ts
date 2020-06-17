@@ -9,6 +9,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PlayersService {
+
+    private playersInRank = []
     
     constructor(
         @InjectRepository(PlayerEntity)
@@ -23,15 +25,30 @@ export class PlayersService {
         return await this.playerRepository.findOne(id);
     }
 
-    async create(reqData: CreatePlayerDto): Promise<PlayerEntity> {
-        const { nome , idade } = reqData; 
-        const playerInstance = new PlayerEntity();
+    async create(reqData: PlayerEntity): Promise<PlayerEntity> { 
+        const playerInstance : PlayerEntity = PlayerEntity.create({
+            name: reqData.name,
+            score: 0,
+            savedInDataBase: reqData.savedInDataBase,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
         
-        playerInstance.nome = nome;
-        playerInstance.idade = idade;
-        
+        let isOnRecordList = this.verifyRecordScoreFromPlayer();
 
-        return await this.playerRepository.save(await playerInstance.save());
+        if(reqData.savedInDataBase == true && isOnRecordList){
+
+            return await PlayerEntity.save(playerInstance);
+        }
+    }
+
+    verifyRecordScoreFromPlayer(){
+        return true;
+    }
+
+    //classificao table
+    sortFromSmalestToLargestScore(){
+
     }
 
     async update(playerReq: PlayerEntity): Promise<UpdateResult> {

@@ -18,7 +18,7 @@ export class PlayersController {
     }
 
     @Post('create')
-    async create(@Body() newPlayer: CreatePlayerDto){
+    async create(@Body() newPlayer: PlayerEntity){
       return this.playerService.create(newPlayer);
     }
 
