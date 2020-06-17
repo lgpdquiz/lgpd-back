@@ -1,5 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
-import Rank from 'src/db/models/rank.entity';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne } from 'typeorm';
 
 
 /** - Entity of players
@@ -15,7 +14,7 @@ export default class Players extends BaseEntity {
    
     @Column({ type: 'double'})
     score: number;
-
+    
     savedInDataBase: boolean
 
     @CreateDateColumn({ name: 'created_at' })
@@ -23,9 +22,6 @@ export default class Players extends BaseEntity {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
-    
-    @OneToMany('Rank', 'players')
-    ranks: Rank;
-
+   
 
 }
