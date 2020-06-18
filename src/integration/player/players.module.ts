@@ -8,7 +8,7 @@ import { MatchModule } from 'src/ingame/match.module';
 
 @Module({
   
-  imports: [TypeOrmModule.forFeature([PlayerEntity]), MatchModule],
+  imports: [TypeOrmModule.forFeature([PlayerEntity])],
   providers: [PlayersService],
   controllers: [PlayersController]
 })

@@ -1,26 +1,23 @@
 import PlayerEntity from '../../db/models/players.entity';
-import CreatePlayerDto from './create-player.dto';
 
 import { UpdateResult, DeleteResult } from 'typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import Players from '../../db/models/players.entity';
-import { MatchService } from 'src/ingame/match.service';
 
 
 @Injectable()
 export class PlayersService {
 
     private idsPlayersCreated: number[] = [];
-   
+
     constructor(
         @InjectRepository(PlayerEntity)
         private playerRepository: Repository<PlayerEntity>
     ) { }
 
-    async findAll(): Promise<PlayerEntity[]> {
-        return PlayerEntity.find();
+    async findAll(){
+        return PlayerEntity.find().then(item=> item);
     }
 
     async findById(id): Promise<PlayerEntity> {
