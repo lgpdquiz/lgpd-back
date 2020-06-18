@@ -1,21 +1,25 @@
 import PlayerEntity from '../../db/models/players.entity';
 import CreatePlayerDto from './create-player.dto';
 
-import { UpdateResult, DeleteResult } from  'typeorm';
+import { UpdateResult, DeleteResult } from 'typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import Players from '../../db/models/players.entity';
+import { MatchService } from 'src/ingame/match.service';
 
 
 @Injectable()
 export class PlayersService {
-    
+
+    private idsPlayersCreated: number[] = [];
+   
     constructor(
         @InjectRepository(PlayerEntity)
-        private playerRepository : Repository<PlayerEntity>,
-    ){}
+        private playerRepository: Repository<PlayerEntity>
+    ) { }
 
-    async  findAll(): Promise<PlayerEntity[]> {
+    async findAll(): Promise<PlayerEntity[]> {
         return PlayerEntity.find();
     }
 
@@ -23,23 +27,48 @@ export class PlayersService {
         return await this.playerRepository.findOne(id);
     }
 
-    async create(reqData: CreatePlayerDto): Promise<PlayerEntity> {
-        const { nome , idade } = reqData; 
-        const playerInstance = new PlayerEntity();
-        
-        playerInstance.nome = nome;
-        playerInstance.idade = idade;
-        
+    async verifyPlayersCreated(id: number) {
+        return this.idsPlayersCreated.includes(id);
+    }
 
-        return await this.playerRepository.save(await playerInstance.save());
+    async create(newPlayer: PlayerEntity) {
+
+        let playerInstance: PlayerEntity = PlayerEntity.create({
+            name: newPlayer.name,
+            score: 0.0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
+
+        await PlayerEntity.save(playerInstance);
+        this.idsPlayersCreated.push(PlayerEntity.getId(playerInstance));
+
+        return playerInstance;
+
     }
 
     async update(playerReq: PlayerEntity): Promise<UpdateResult> {
-        return await this.playerRepository.update(playerReq.id, playerReq);
+        return await PlayerEntity.update(playerReq.id, playerReq)
+
     }
 
     async delete(id): Promise<DeleteResult> {
-        return await this.playerRepository.delete(id);
+        let arrayWithouId = [];
+        let found = false;
+        this.idsPlayersCreated.forEach(item => {
+            if (item != id) {
+                found = true;
+                arrayWithouId.push(item);
+            }
+        });
+
+        if (arrayWithouId.length == 1 && !found) {
+            arrayWithouId.pop();
+        } else {
+            console.log("## Empty array");
+        }
+        this.idsPlayersCreated = arrayWithouId;
+        return await PlayerEntity.delete(id);
     }
 
 }

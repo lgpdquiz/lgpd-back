@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne } from 'typeorm';
+import { Length } from 'class-validator';
+
 
 /** - Entity of players
 */
@@ -9,15 +11,16 @@ export default class Players extends BaseEntity {
     id: number;
 
     @Column({ type: 'varchar', length: 50 })
-    nome: string;
+    name: string;
 
-    @Column()
-    idade: number;
+    @Column({ type: 'double' })
+    score: number;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
 
 }

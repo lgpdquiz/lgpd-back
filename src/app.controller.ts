@@ -36,7 +36,6 @@ export class AppController {
       }
     }, 2000);
 
-
     return 'Hello World';
   }
 
