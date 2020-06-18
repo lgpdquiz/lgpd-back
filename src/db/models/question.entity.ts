@@ -9,7 +9,7 @@ export default class Question extends BaseEntity {
     @PrimaryColumn()
     id: number;
 
-    @Column()
+    @Column({length:255})
     question: string;
 
     @CreateDateColumn({ name: 'created_at' })

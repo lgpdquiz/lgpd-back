@@ -6,18 +6,17 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import Players from '../../db/models/players.entity';
+import { MatchService } from 'src/ingame/match.service';
 
 
 @Injectable()
 export class PlayersService {
 
     private idsPlayersCreated: number[] = [];
-    private players: Players[];
-
-
+   
     constructor(
         @InjectRepository(PlayerEntity)
-        private playerRepository: Repository<PlayerEntity>,
+        private playerRepository: Repository<PlayerEntity>
     ) { }
 
     async findAll(): Promise<PlayerEntity[]> {
@@ -28,22 +27,24 @@ export class PlayersService {
         return await this.playerRepository.findOne(id);
     }
 
-    async create(newPlayer: PlayerEntity): Promise<PlayerEntity> {
-        console.log(newPlayer)
+    async verifyPlayersCreated(id: number) {
+        return this.idsPlayersCreated.includes(id);
+    }
+
+    async create(newPlayer: PlayerEntity) {
+
         let playerInstance: PlayerEntity = PlayerEntity.create({
             name: newPlayer.name,
-            score: 0,
-            savedInDataBase: newPlayer.savedInDataBase,
+            score: 0.0,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
 
-        
-
         await PlayerEntity.save(playerInstance);
         this.idsPlayersCreated.push(PlayerEntity.getId(playerInstance));
+
         return playerInstance;
-       
+
     }
 
     async update(playerReq: PlayerEntity): Promise<UpdateResult> {

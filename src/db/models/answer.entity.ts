@@ -11,7 +11,7 @@ export default class Answer extends BaseEntity {
     @PrimaryColumn({ primary: true })
     id: number;
 
-    @Column()
+    @Column({length:255})
     answer: string;
 
     @Column()

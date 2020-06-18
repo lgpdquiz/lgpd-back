@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne } from 'typeorm';
+import { Length } from 'class-validator';
 
 
 /** - Entity of players
@@ -11,17 +12,15 @@ export default class Players extends BaseEntity {
 
     @Column({ type: 'varchar', length: 50 })
     name: string;
-   
-    @Column({ type: 'double'})
+
+    @Column({ type: 'double' })
     score: number;
-    
-    savedInDataBase: boolean
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
-   
+
 
 }

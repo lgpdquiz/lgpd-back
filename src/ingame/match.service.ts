@@ -5,8 +5,8 @@ import { QuestionsService } from '../integration/questions/questions.service';
 import AnswerEntity from 'src/db/models/answer.entity';
 import Answer from 'src/db/models/answer.entity';
 import { AnswersService } from 'src/integration/answers/answers.service';
-import { type } from 'os';
-import { Any } from 'typeorm';
+import Players from 'src/db/models/players.entity';
+import { PlayersService } from 'src/integration/player/players.service';
 
 @Injectable()
 export class MatchService {
@@ -31,8 +31,9 @@ export class MatchService {
     private questionsRequests = 0;
     private matchStarted = false;
     private restartMatch = true;
-    private numberTotalOfQuestions = 3;
+    private numberTotalOfQuestions = 6;
     private showFinalInfo = false;
+    private playerService: PlayersService
 
 
     constructor(private questionService: QuestionsService, private answerService: AnswersService) { }
@@ -41,6 +42,7 @@ export class MatchService {
     /** 
      * This method starts the match from the beginning */
     async startMatch() {
+
         let verifyQuestionExist: boolean = this.questionService.isQuestionsGenerated();
         this.questionsRequests = 0;
         this.showFinalInfo = false;
@@ -74,7 +76,7 @@ export class MatchService {
         this.questionsRequests++;
         if (this.questionsRequests <= this.numberTotalOfQuestions) {
             this.newQuestion = await this.questionService.randomQuestionsAndAnswers().then(item => item);
-             
+
 
             if (this.newQuestion != null && this.newQuestion != undefined) {
                 this.resetTimer();
@@ -221,12 +223,13 @@ export class MatchService {
     }
 
     async resetInfo() {
+        // this.player = null;
         this.finalScore = 0;
         this.scoreInQuestion = 1000;
         this.correctCount = 0;
         this.wrongCount = 0;
         this.totalTimeSpentInMatch = 0;
-
     }
+
 
 }

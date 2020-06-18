@@ -8,6 +8,6 @@ import { AnswersModule } from 'src/integration/answers/answers.module';
     imports: [AnswersModule, QuestionsModule],
     controllers: [MatchController],
     providers: [MatchService],
-  
+    exports: [MatchService]
   })
 export class MatchModule {}
