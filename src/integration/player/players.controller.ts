@@ -22,7 +22,6 @@ export class PlayersController {
       return this.playerService.create(newPlayer);
     }
 
-
     @Put(':id/update')
     async update(@Param('id') id, @Body() player: PlayerEntity): Promise<any> {
         player.id = Number(id);
